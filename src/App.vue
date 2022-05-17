@@ -2,15 +2,29 @@
   <img alt="Vue logo" src="./assets/logo.png">
   <h1>{{count}}</h1>
   <h1>{{double}}</h1>
-  <ul>
+  <h2>{{greetings}}</h2>
+  <h1>X：{{x}},Y：{{y}}</h1>
+  <!-- <ul>
     <li v-for="number in numbers" :key="number"><h1>{{number}}</h1></li>
-  </ul>
+  </ul> -->
   <h1>{{person.name}}</h1>
   <button @click="increase">▲+1</button>
+  <button @click="updateGreeting">updateGreeting</button>
 </template>
 
 <script lang="ts">
-import {ref, computed, reactive, toRefs, onMounted, onUpdated, onRenderTriggered } from 'vue';
+import useMousePosition from './hooks/useMousePosition'
+import {
+  ref, 
+  computed, 
+  reactive, 
+  toRefs, 
+  onMounted, 
+  onUpdated, 
+  onRenderTriggered, 
+  watch,
+  onUnmounted,
+} from 'vue';
 interface DataProps {
   count:number;
   double:number;
@@ -29,6 +43,18 @@ export default ({
     // const increase = () => {
     //   count.value++
     // }
+    // const greetings = ref('')
+    // const updateGreeting = () => {
+    //   greetings.value += "Hellow!"
+    // }
+    //watch 使用一
+    // watch(greetings, (newValue, oldValue) => {
+    //   console.log('old',oldValue)
+    //   console.log('new',newValue)
+    //   document.title = 'updated' + greetings.value
+    // })  
+      
+
     onMounted(() => {
       console.log('mounted')
     })
@@ -47,9 +73,25 @@ export default ({
     })
     data.numbers[0] = 5
     data.person.name = "viking"
+
+    const greetings = ref('')
+    const updateGreeting = () => {
+      greetings.value += "Hello!"
+    }
+    //watch 使用二
+    watch([greetings, () => data.count], (newValue, oldValue) => {
+      console.log('old',oldValue)
+      console.log('new',newValue)
+      document.title = 'updated' + greetings.value + data.count
+    })
+    const { x, y } = useMousePosition();
     const refData = toRefs(data)
     return {
-      ...refData
+      ...refData,
+      greetings,
+      updateGreeting,
+      x,
+      y,
     }
   }
 });
