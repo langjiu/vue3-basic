@@ -1,19 +1,24 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <h1>{{count}}</h1>
-  <h1>{{double}}</h1>
-  <h2>{{greetings}}</h2>
-  <h1>X：{{x}},Y：{{y}}</h1>
-  <!-- <ul>
-    <li v-for="number in numbers" :key="number"><h1>{{number}}</h1></li>
-  </ul> -->
-  <h1>{{person.name}}</h1>
-  <button @click="increase">▲+1</button>
-  <button @click="updateGreeting">updateGreeting</button>
+    <div>
+      <img alt="Vue logo" src="./assets/logo.png">
+      <h1>{{count}}</h1>
+      <h1>{{double}}</h1>
+      <h2>{{greetings}}</h2>
+      <h1>X：{{x}},Y：{{y}}</h1>
+      <h1 v-if="loading">Loading!...</h1>
+      <img v-if="loaded" :src="result.message">
+      <!-- <ul>
+        <li v-for="number in numbers" :key="number"><h1>{{number}}</h1></li>
+      </ul> -->
+      <h1>{{person.name}}</h1>
+      <button @click="increase">▲+1</button>
+      <button @click="updateGreeting">updateGreeting</button>
+    </div>
 </template>
 
 <script lang="ts">
 import useMousePosition from './hooks/useMousePosition'
+import useURLLoader from './hooks/useURLLoader';
 import {
   ref, 
   computed, 
@@ -23,7 +28,6 @@ import {
   onUpdated, 
   onRenderTriggered, 
   watch,
-  onUnmounted,
 } from 'vue';
 interface DataProps {
   count:number;
@@ -78,6 +82,7 @@ export default ({
     const updateGreeting = () => {
       greetings.value += "Hello!"
     }
+    const {result,loading,loaded} = useURLLoader('https://dog.ceo/api/breeds/image/random')
     //watch 使用二
     watch([greetings, () => data.count], (newValue, oldValue) => {
       console.log('old',oldValue)
@@ -92,6 +97,9 @@ export default ({
       updateGreeting,
       x,
       y,
+      result,
+      loading,
+      loaded
     }
   }
 });
